@@ -3,29 +3,18 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { Cover } from "../components/Cover";
 import { Layout } from "../components/Layout";
-import { Dropdown } from "../components/Dropdown";
-import { Category } from "../types/category";
 import { ArticleCard } from "../components/ArticleCard";
 import { Article } from "../types/article";
 import { Pagination } from "../components/Pagination";
 
 export interface HomeProps {
   app: AppMeta;
-  categories: (Content & Category)[];
   articles: (Content & Article)[];
   total: number;
   page?: number;
-  categorySlug?: string;
 }
 
-export function Home({
-  app,
-  categories,
-  articles,
-  total,
-  page = 1,
-  categorySlug = "",
-}: HomeProps) {
+export function Home({ app, articles, total, page = 1 }: HomeProps) {
   return (
     <Layout app={app}>
       <Head>
@@ -34,17 +23,10 @@ export function Home({
       </Head>
       {app.cover?.value && <Cover app={app} />}
       <div className={styles.Articles}>
-        <Dropdown categories={categories} selected={categorySlug} />
-        <div className={styles.Inner}>
-          {articles.map((article) => (
-            <ArticleCard article={article} key={article._id} />
-          ))}
-        </div>
-        <Pagination
-          total={total}
-          current={page}
-          basePath={categorySlug ? `/category/${categorySlug}` : ``}
-        />
+        {articles.map((article) => (
+          <ArticleCard article={article} key={article._id} />
+        ))}
+        <Pagination total={total} current={page} />
       </div>
     </Layout>
   );

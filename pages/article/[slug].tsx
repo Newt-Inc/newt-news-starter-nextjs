@@ -44,9 +44,12 @@ export default function ArticlePage({
     return "";
   }, [app, meta, currentArticle?.body]);
 
-  const authorName = useMemo(() => {
-    return currentArticle?.author?.fullName || "NO NAME";
-  }, [currentArticle?.author?.fullName]);
+  const ogImageUrl = useMemo(() => {
+    if (meta?.ogImage) {
+      return meta.ogImage.src;
+    }
+    return "";
+  }, [app, meta]);
 
   const publishDate = useMemo(() => {
     return currentArticle?._sys?.createdAt
@@ -65,22 +68,12 @@ export default function ArticlePage({
     };
   }, [currentArticle?.body]);
 
-  const authorIntroduction = useMemo(() => {
-    if (currentArticle?.author?.introduction) {
-      return {
-        __html: currentArticle.author.introduction,
-      };
-    }
-    return {
-      __html: "",
-    };
-  }, [currentArticle?.author?.introduction]);
-
   return (
     <Layout app={app}>
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
+        <meta property="og:image" content={ogImageUrl} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <article className={styles.Article}>
@@ -88,71 +81,17 @@ export default function ArticlePage({
           <h1 className={styles.Article_Title}>
             {currentArticle?.title || ""}
           </h1>
-          <div className={styles.Article_Data}>
-            <div className={styles.Article_Avatar}>
-              {currentArticle?.author?.profileImage ? (
-                <img
-                  src={currentArticle.author.profileImage.src}
-                  alt=""
-                  width="32"
-                  height="32"
-                />
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20px"
-                  height="20px"
-                  viewBox="0 0 24 24"
-                  fill="#CCCCCC"
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-              )}
-            </div>
-            <div className={styles.Article_AuthorName}>{authorName}</div>
-            <time
-              dateTime={currentArticle?._sys?.createdAt}
-              className={styles.Article_Date}
-            >
-              {publishDate}
-            </time>
-          </div>
+          <time
+            dateTime={currentArticle?._sys?.createdAt}
+            className={styles.Article_Date}
+          >
+            {publishDate}
+          </time>
         </div>
         <div
           className={styles.Article_Body}
           dangerouslySetInnerHTML={body}
         ></div>
-        <aside className={styles.Author}>
-          <div className={styles.Author_Avatar}>
-            {currentArticle?.author?.profileImage ? (
-              <img
-                src={currentArticle.author.profileImage.src}
-                alt=""
-                width="48"
-                height="48"
-              />
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28px"
-                height="28px"
-                viewBox="0 0 24 24"
-                fill="#CCCCCC"
-              >
-                <path d="M0 0h24v24H0V0z" fill="none" />
-                <path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
-            )}
-          </div>
-          <div className={styles.Author_Text}>
-            <div className={styles.Author_Name}>{authorName}</div>
-            <div
-              className={styles.Author_Description}
-              dangerouslySetInnerHTML={authorIntroduction}
-            ></div>
-          </div>
-        </aside>
       </article>
     </Layout>
   );

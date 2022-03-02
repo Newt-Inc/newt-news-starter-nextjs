@@ -1,6 +1,5 @@
 import { Content, createClient } from "newt-client-js";
 import { Article } from "../types/article";
-import { Category } from "../types/category";
 
 const client = createClient({
   spaceUid: process.env.NEXT_PUBLIC_NEWT_SPACE_UID,
@@ -15,26 +14,13 @@ export const fetchApp = async () => {
   return app;
 };
 
-export const fetchCategories = async () => {
-  const { items } = await client.getContents<Content & Category>({
-    appUid: process.env.NEXT_PUBLIC_NEWT_APP_UID,
-    modelUid: process.env.NEXT_PUBLIC_NEWT_CATEGORY_MODEL_UID,
-    query: {
-      depth: 1,
-    },
-  });
-  return items;
-};
-
 export const fetchArticles = async (options?: {
   query?: Record<string, any>;
   search?: string;
-  category?: string;
   page?: number;
   limit?: number;
-  format?: string;
 }) => {
-  const { query, search, category, page, limit, format } = options || {};
+  const { query, search, page, limit } = options || {};
   const _query = {
     ...(query || {}),
   };
@@ -51,9 +37,6 @@ export const fetchArticles = async (options?: {
         },
       },
     ];
-  }
-  if (category) {
-    _query.categories = category;
   }
   const _page = page || 1;
   const _limit = limit || Number(process.env.NEXT_PUBLIC_PAGE_LIMIT) || 10;
@@ -75,8 +58,8 @@ export const fetchArticles = async (options?: {
   };
 };
 
-export const getPages = async (options?: { category?: string }) => {
-  const { total } = await fetchArticles(options);
+export const getPages = async () => {
+  const { total } = await fetchArticles();
   const pages = Array(
     Math.ceil(total / Number(process.env.NEXT_PUBLIC_PAGE_LIMIT) || 10)
   )
