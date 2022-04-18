@@ -42,14 +42,14 @@ export default function ArticlePage({
       }).slice(0, 200);
     }
     return "";
-  }, [app, meta, currentArticle?.body]);
+  }, [meta, currentArticle?.body]);
 
   const ogImageUrl = useMemo(() => {
     if (meta?.ogImage) {
       return meta.ogImage.src;
     }
     return "";
-  }, [app, meta]);
+  }, [meta]);
 
   const publishDate = useMemo(() => {
     return currentArticle?._sys?.createdAt
